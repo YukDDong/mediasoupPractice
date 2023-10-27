@@ -13,7 +13,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
   // const { currentSocket } = useRecoilValue(socketState);
   const myVideoRef = useRef<HTMLVideoElement>(null);
 
-  let params: any = {
+  let videoParams: any = {
     // mediasoup params
     encodings: [
       {
@@ -37,21 +37,21 @@ const Producer = ({ currentSocket }: ProducerProps) => {
       videoGoogleStartBitrate: 1000,
     },
   };
+  let audioParams: any;
   let rtpCapabilities: any;
   let device: Device | undefined;
   let producerTransport: types.Transport | undefined;
   let dtlsParameters: any;
-  let producer: types.Producer | undefined;
+  let videoProducer: types.Producer | undefined;
+  let audioProducer: types.Producer | undefined;
 
   const streamSuccess = async (stream: MediaStream) => {
     if (myVideoRef.current) {
       myVideoRef.current.srcObject = stream;
     }
-    const track = stream.getVideoTracks()[0];
-    params = {
-      track,
-      ...params,
-    };
+
+    videoParams = { track: stream.getVideoTracks()[0], ...videoParams };
+    audioParams = { track: stream.getAudioTracks()[0], ...audioParams };
     getRtpCapabilities();
   };
 
@@ -195,16 +195,29 @@ const Producer = ({ currentSocket }: ProducerProps) => {
     // to send media to the Router
     // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
     // 위의 'connect' and 'produce' 이벤트를 발생시킵니다.
-    producer = await producerTransport?.produce(params);
+    videoProducer = await producerTransport?.produce(videoParams);
+    audioProducer = await producerTransport?.produce(audioParams);
 
-    producer?.on("trackended", () => {
-      console.log("track ended");
+    videoProducer?.on("trackended", () => {
+      console.log("video track ended");
 
       // close video track
     });
 
-    producer?.on("transportclose", () => {
-      console.log("transport ended");
+    videoProducer?.on("transportclose", () => {
+      console.log("video transport ended");
+
+      // close video track
+    });
+
+    audioProducer?.on("trackended", () => {
+      console.log("audio track ended");
+
+      // close video track
+    });
+
+    audioProducer?.on("transportclose", () => {
+      console.log("audio transport ended");
 
       // close video track
     });
@@ -234,7 +247,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
   return (
     <VideoContainer>
       <h2>내가 스트리머란다.</h2>
-      <Video ref={myVideoRef} autoPlay />
+      <Video ref={myVideoRef} autoPlay muted />
     </VideoContainer>
   );
 };

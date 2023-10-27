@@ -12,6 +12,7 @@ interface ConsumerProps {
 
 const Consumer = ({ currentSocket }: ConsumerProps) => {
   const producerVideoRef = useRef<HTMLVideoElement>(null);
+  const producerAudioRef = useRef<HTMLAudioElement>(null);
   const { userId } = useRecoilValue(userState);
   let rtpCapabilities: any;
   let device: Device | undefined;
@@ -126,7 +127,6 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
           console.log("Cannot Consume");
           return;
         }
-
         console.log("666666", response);
         // then consume with the local consumer transport
         // which creates a consumer
@@ -153,6 +153,47 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
         // socket.emit('producerresume');
       }
     );
+    await currentSocket?.emit(
+      "media",
+      {
+        action: "consume",
+        data: {
+          rtpCapabilities: device?.rtpCapabilities,
+          kind: "audio",
+          user_id: "ekfhd5537",
+        },
+      },
+      async (response) => {
+        if (response.error) {
+          console.log("Cannot Consume");
+          return;
+        }
+        console.log("666666", response);
+        // then consume with the local consumer transport
+        // which creates a consumer
+        consumer = await consumerTransport?.consume({
+          id: response.id,
+          producerId: response.producerId,
+          kind: response.kind,
+          rtpParameters: response.rtpParameters,
+        });
+
+        console.log("consumer", consumer);
+        const track = consumer?.track;
+        // destructure and retrieve the video track from the producer
+        // const { _track } = consumer;
+        console.log("track", track);
+        if (track && producerAudioRef.current) {
+          const remoteStream = new MediaStream();
+          remoteStream.addTrack(track);
+          producerAudioRef.current.srcObject = remoteStream;
+        }
+
+        // // the server consumer started with media paused
+        // // so we need to inform the server to resume
+        // socket.emit('producerresume');
+      }
+    );
   };
 
   useEffect(() => {
@@ -164,6 +205,7 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
     <VideoContainer>
       <h2>나는 시청자란다.</h2>
       <Video ref={producerVideoRef} autoPlay />
+      <audio ref={producerAudioRef} autoPlay />
     </VideoContainer>
   );
 };
