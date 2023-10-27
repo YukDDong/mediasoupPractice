@@ -96,6 +96,8 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
               callback();
             } catch (error) {
               console.log(error);
+              console.log(errback);
+
               // Tell the transport that something was wrong
               // errback(error);
             }
