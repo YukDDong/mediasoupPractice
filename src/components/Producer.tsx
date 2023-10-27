@@ -110,6 +110,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
       createSendTransport();
     } catch (error) {
       console.log(error);
+
       // if (error.name === "UnsupportedError")
       //   console.warn("browser not supported");
     }
@@ -131,7 +132,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
 
         console.log("response", response);
         producerTransport = device?.createSendTransport(response.params);
-        dtlsParameters = response.params.dtlsParameters;
+        // dtlsParameters = response.params.dtlsParameters;
 
         producerTransport?.on(
           "connect",
@@ -148,6 +149,8 @@ const Producer = ({ currentSocket }: ProducerProps) => {
               callback();
             } catch (error) {
               console.log(error);
+              console.log(errback);
+
               // errback(error);
             }
           }
@@ -180,6 +183,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
                 }
               );
             } catch (error) {
+              console.log(errback);
               // errback(error);
               console.log(error);
             }
