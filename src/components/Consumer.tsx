@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil";
 import { Video, VideoContainer } from "./Producer";
-import { socketState } from "../recoil/socket";
+// import { socketState } from "../recoil/socket";
 import { Socket } from "socket.io-client";
 import { useEffect, useRef } from "react";
 import { Device, types } from "mediasoup-client";
@@ -18,7 +18,7 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
   let device: Device | undefined;
   let consumer: types.Consumer | undefined;
   let consumerTransport: types.Transport | undefined;
-  let dtlsParameters: any;
+  // let dtlsParameters: any;
 
   // 2. get rtp capabilities
   const getRtpCapabilities = () => {
@@ -80,7 +80,7 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
 
         // https://mediasoup.org/documentation/v3/communication-between-client-and-server/#producing-media
         // this event is raised when a first call to transport.produce() is made
-        dtlsParameters = response.params.dtlsParameters;
+        // dtlsParameters = response.params.dtlsParameters;
         consumerTransport?.on(
           "connect",
           async ({ dtlsParameters }, callback, errback) => {
@@ -95,8 +95,9 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
               // Tell the transport that parameters were transmitted.
               callback();
             } catch (error) {
+              console.log(error);
               // Tell the transport that something was wrong
-              errback(error);
+              // errback(error);
             }
           }
         );
@@ -122,7 +123,7 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
           user_id: "ekfhd5537",
         },
       },
-      async (response) => {
+      async (response: any) => {
         if (response.error) {
           console.log("Cannot Consume");
           return;
@@ -163,7 +164,7 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
           user_id: "ekfhd5537",
         },
       },
-      async (response) => {
+      async (response: any) => {
         if (response.error) {
           console.log("Cannot Consume");
           return;

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useSetRecoilState } from "recoil";
 import { Socket, io } from "socket.io-client";
 import styled from "styled-components";
-import { socketState } from "../recoil/socket";
+// import { socketState } from "../recoil/socket";
 import { userState } from "../recoil/user";
 
 interface ConnectSocketProps {

@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { Socket } from "socket.io-client";
+// import { Socket } from "socket.io-client";
 
 export interface SocketType {
   currentSocket: any;

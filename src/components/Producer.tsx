@@ -1,6 +1,6 @@
-import { useRecoilValue } from "recoil";
+// import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { socketState } from "../recoil/socket";
+// import { socketState } from "../recoil/socket";
 import { useEffect, useRef } from "react";
 import { Device, types } from "mediasoup-client";
 import { Socket } from "socket.io-client";
@@ -41,7 +41,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
   let rtpCapabilities: any;
   let device: Device | undefined;
   let producerTransport: types.Transport | undefined;
-  let dtlsParameters: any;
+  // let dtlsParameters: any;
   let videoProducer: types.Producer | undefined;
   let audioProducer: types.Producer | undefined;
 
@@ -147,7 +147,8 @@ const Producer = ({ currentSocket }: ProducerProps) => {
               // Tell the transport that parameters were transmitted.
               callback();
             } catch (error) {
-              errback(error);
+              console.log(error);
+              // errback(error);
             }
           }
         );
@@ -171,7 +172,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
                     appData: parameters.appData,
                   },
                 },
-                (id) => {
+                (id: any) => {
                   // Tell the transport that parameters were transmitted and provide it with the
                   // server side producer's id.
                   console.log("444444", id);
@@ -179,7 +180,8 @@ const Producer = ({ currentSocket }: ProducerProps) => {
                 }
               );
             } catch (error) {
-              errback(error);
+              // errback(error);
+              console.log(error);
             }
           }
         );
