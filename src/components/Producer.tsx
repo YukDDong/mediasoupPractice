@@ -59,7 +59,7 @@ const Producer = ({ currentSocket }: ProducerProps) => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
         .getUserMedia({
-          audio: false,
+          audio: true,
           video: {
             width: {
               min: 640,
