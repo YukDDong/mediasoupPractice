@@ -1,6 +1,4 @@
-// import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-// import { socketState } from "../recoil/socket";
 import { useEffect, useRef } from "react";
 import { Device, types } from "mediasoup-client";
 import { Socket } from "socket.io-client";
@@ -10,29 +8,26 @@ interface ProducerProps {
 }
 
 const Producer = ({ currentSocket }: ProducerProps) => {
-  // const { currentSocket } = useRecoilValue(socketState);
   const myVideoRef = useRef<HTMLVideoElement>(null);
 
   let videoParams: any = {
-    // mediasoup params
     encodings: [
       {
         rid: "r0",
-        maxBitrate: 100000,
-        scalabilityMode: "S1T3",
+        maxBitrate: 1000000,
+        scalabilityMode: "S1T1",
       },
       {
         rid: "r1",
-        maxBitrate: 300000,
-        scalabilityMode: "S1T3",
+        maxBitrate: 3000000,
+        scalabilityMode: "S1T1",
       },
       {
         rid: "r2",
-        maxBitrate: 900000,
-        scalabilityMode: "S1T3",
+        maxBitrate: 9000000,
+        scalabilityMode: "S1T1",
       },
     ],
-    // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerCodecOptions
     codecOptions: {
       videoGoogleStartBitrate: 1000,
     },
@@ -41,7 +36,6 @@ const Producer = ({ currentSocket }: ProducerProps) => {
   let rtpCapabilities: any;
   let device: Device | undefined;
   let producerTransport: types.Transport | undefined;
-  // let dtlsParameters: any;
   let videoProducer: types.Producer | undefined;
   let audioProducer: types.Producer | undefined;
 
@@ -110,9 +104,6 @@ const Producer = ({ currentSocket }: ProducerProps) => {
       createSendTransport();
     } catch (error) {
       console.log(error);
-
-      // if (error.name === "UnsupportedError")
-      //   console.warn("browser not supported");
     }
   };
 
@@ -132,26 +123,21 @@ const Producer = ({ currentSocket }: ProducerProps) => {
 
         console.log("response", response);
         producerTransport = device?.createSendTransport(response.params);
-        // dtlsParameters = response.params.dtlsParameters;
 
         producerTransport?.on(
           "connect",
           async ({ dtlsParameters }, callback, errback) => {
             console.log("transport Connect");
             try {
-              // Signal local DTLS parameters to the server side transport
               console.log("22222222", dtlsParameters);
               await currentSocket.emit("media", {
                 action: "connectWebRtcTransport",
                 data: { dtlsParameters, type: "producer" },
               });
-              // Tell the transport that parameters were transmitted.
               callback();
             } catch (error) {
               console.log(error);
               console.log(errback);
-
-              // errback(error);
             }
           }
         );
@@ -162,9 +148,6 @@ const Producer = ({ currentSocket }: ProducerProps) => {
             console.log("3333333", parameters);
 
             try {
-              // tell the server to create a Producer
-              // with the following parameters and produce
-              // and expect back a server side producer id
               await currentSocket.emit(
                 "media",
                 {
@@ -176,8 +159,6 @@ const Producer = ({ currentSocket }: ProducerProps) => {
                   },
                 },
                 (id: any) => {
-                  // Tell the transport that parameters were transmitted and provide it with the
-                  // server side producer's id.
                   console.log("444444", id);
                   callback({ id });
                 }
@@ -197,10 +178,6 @@ const Producer = ({ currentSocket }: ProducerProps) => {
 
   // 5
   const connectSendTransport = async () => {
-    // we now call produce() to instruct the producer transport
-    // to send media to the Router
-    // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
-    // 위의 'connect' and 'produce' 이벤트를 발생시킵니다.
     videoProducer = await producerTransport?.produce(videoParams);
     audioProducer = await producerTransport?.produce(audioParams);
 
@@ -229,25 +206,12 @@ const Producer = ({ currentSocket }: ProducerProps) => {
     });
   };
 
-  // const handleTotalFlow = async () => {
-  //   await getLocalStream();
-  //   await getRtpCapabilities();
-  //   await createSendTransport();
-  //   await connectSendTransport();
-  // };
-
   console.log(currentSocket);
 
   useEffect(() => {
     if (!currentSocket) return;
 
-    // handleTotalFlow();
     getLocalStream();
-    // getRtpCapabilities();
-    // connectSendTransport();
-    // // createDevice();
-    // await createSendTransport();
-    // await connectSendTransport();
   }, [currentSocket]);
 
   return (

@@ -9,6 +9,8 @@ interface ConnectSocketProps {
   setCurrentSocket: (socket: Socket) => void;
 }
 
+const VITE_RTC_SERVER_URL = import.meta.env.VITE_RTC_SERVER_URL;
+
 const ConnectSocket = ({ setCurrentSocket }: ConnectSocketProps) => {
   const setUser = useSetRecoilState(userState);
   const roomNameRef = useRef<HTMLInputElement>(null);
@@ -25,7 +27,8 @@ const ConnectSocket = ({ setCurrentSocket }: ConnectSocketProps) => {
 
     const socket: Socket = io(
       // `http://localhost:8081?user_id=${user_id}&session_id=${session_id}`
-      `http://3.34.5.151:8081?user_id=${user_id}&session_id=${session_id}`
+      // `http://3.34.5.151:8081?user_id=${user_id}&session_id=${session_id}`
+      `${VITE_RTC_SERVER_URL}?user_id=${user_id}&session_id=${session_id}`
     );
 
     // 소켓 연결

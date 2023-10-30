@@ -199,11 +199,33 @@ const Consumer = ({ currentSocket }: ConsumerProps) => {
     );
   };
 
+  const audioContext = new window.AudioContext();
+  const delayNode = audioContext.createDelay(5.0); // 최대 5초까지 지연 가능
+  delayNode.delayTime.value = 0.005; // 오디오를 5ms 지연
+
+  const adjustAudioDelay = (stream: MediaStream) => {
+    const audioTrack = stream.getAudioTracks()[0];
+    if (audioTrack) {
+      const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(
+        new MediaStream([audioTrack])
+      );
+      mediaStreamAudioSourceNode.connect(delayNode);
+      delayNode.connect(audioContext.destination);
+    }
+  };
+
   useEffect(() => {
     if (!currentSocket) return;
 
     getRtpCapabilities();
   }, [currentSocket]);
+
+  useEffect(() => {
+    if (producerAudioRef.current && producerAudioRef.current.srcObject) {
+      const stream = producerAudioRef.current.srcObject as MediaStream;
+      adjustAudioDelay(stream);
+    }
+  }, [producerAudioRef.current?.srcObject]);
   return (
     <VideoContainer>
       <h2>나는 시청자란다.</h2>
